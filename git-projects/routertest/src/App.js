@@ -1,5 +1,5 @@
 import {
-  BrowserRouter as Router,
+  BrowserRouter as Router, // BroserRouter (alias Router) es un react context 
   Routes,
   Route,
   Link
@@ -12,7 +12,7 @@ import Error from './component/Error';
 
 function App() {
   return (
-    <Router>
+    <Router> {/* Wrappeamos toda la app adentro de este component, que es el que va a dar info sobre routing a todos los otros components de la aplicación */}
       <div className="App">
         <header className="App-header">
           <h2>These are links:</h2>
