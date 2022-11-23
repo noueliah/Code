@@ -1,5 +1,5 @@
 import "./App.css";
-import Playground from "./components/Playground";
+import Playground from "./Playground";
 import Name from "./components/Name";
 
 function App() {
