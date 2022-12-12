@@ -1,13 +1,7 @@
 import "./App.css";
-import Playground from "./Playground";
-import Name from "./components/Name";
+import Paint from "./components/Paint";
 
 function App() {
-  return (
-    <div>
-      <Name />
-      <Playground />
-    </div>
-  );
+  return <Paint />;
 }
 export default App;

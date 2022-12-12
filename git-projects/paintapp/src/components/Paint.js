@@ -1,14 +1,16 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Name from "./Name";
 import randomColor from "randomcolor";
-import ColorPicker from "./colorpicker";
+import ColorPicker from "./ColorPicker";
+import useWindowSize from "./WindowSize";
+import Canvas from "./Canvas";
+import RefreshButton from "./RefreshButton";
 
-function Paint() {
+export default function Paint() {
   const [colors, setColors] = useState([]);
   const [activeColor, setActiveColor] = useState(null);
-
-  const getColors = () => {
+  const getColors = useCallback(() => {
     const baseColor = randomColor().slice(1);
     fetch(`https://www.thecolorapi.com/scheme?hex=${baseColor}&mode=monochrome`)
       .then((res) => res.json())
@@ -16,24 +18,38 @@ function Paint() {
         setColors(res.colors.map((color) => color.hex.value));
         setActiveColor(res.colors[0].hex.value);
       });
-  };
-
+  }, []);
   useEffect(getColors, []);
 
+  const [visible, setVisible] = useState(false);
+  let timeoutId = useRef();
+  const [windowWidth, windowHeight] = useWindowSize(() => {
+    setVisible(true);
+    clearTimeout(timeoutId.current);
+    timeoutId.current = setTimeout(() => setVisible(false), 500);
+  });
+
   return (
-    <header style={{ borderTop: `10 px solid ${activeColor}` }}>
-      <div className="app">
-        <Name />
+    <div className="app">
+      <header style={{ borderTop: `10px solid ${activeColor}` }}>
+        <div>
+          <Name />
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <ColorPicker
+            colors={colors}
+            activeColor={activeColor}
+            setActiveColor={setActiveColor}
+          />
+          <RefreshButton cb={getColors} />
+        </div>
+      </header>
+      {activeColor && (
+        <Canvas color={activeColor} height={window.innerHeight} />
+      )}
+      <div className={`window-size ${visible ? "" : "hidden"}`}>
+        {windowWidth} x {windowHeight}
       </div>
-      <div style={{ marginTop: 10 }}>
-        <ColorPicker
-          colors={colors}
-          activeColor={activeColor}
-          setActiveColor={setActiveColor}
-        />
-      </div>
-    </header>
+    </div>
   );
 }
-
-export default Paint;
